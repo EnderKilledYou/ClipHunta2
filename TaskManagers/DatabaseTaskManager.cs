@@ -1,8 +1,8 @@
 ﻿namespace ClipHunta2;
 
-public sealed class DatabaseTaskManager : LongTaskManger<DatabaseTask>
+public sealed class DatabaseTaskManager : LongTaskManager<DatabaseTask>
 {
-    private static DatabaseTaskManager _instance;
+    private static DatabaseTaskManager? _instance;
 
     public DatabaseTaskManager()
     {
@@ -16,11 +16,9 @@ public sealed class DatabaseTaskManager : LongTaskManger<DatabaseTask>
 
     public static DatabaseTaskManager GetInstance()
     {
-        if (_instance == null)
-        {
-            _instance = new DatabaseTaskManager();
-            _cancellationToken = new CancellationTokenSource();
-        }
+        if (_instance != null) return _instance;
+        _instance = new DatabaseTaskManager();
+        _cancellationToken = new CancellationTokenSource();
 
         return _instance;
     }

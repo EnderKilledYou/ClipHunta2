@@ -19,6 +19,11 @@ public abstract class LongTask
     }
 
     public abstract int Count();
+    public abstract int Finished();
+    public abstract int AverageMilliSeconds();
+    public abstract int MaxMilliSeconds();
+    public abstract int MaxBackPressure();
+    public abstract int FastestMilliSecond();
 
     public override string ToString()
     {

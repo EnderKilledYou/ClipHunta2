@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using Serilog;
 
 namespace ClipHunta2;
@@ -6,7 +7,7 @@ namespace ClipHunta2;
 public partial class LongTaskWithReturn<T, TR> : LongTask
 {
     private readonly ConcurrentQueue<LongTaskQueueItemWithReturn<T, TR>> _queue = new();
-
+    private Stopwatch sw = new Stopwatch();
     protected override async Task _iteration()
     {
         var value = await _take();
@@ -16,19 +17,28 @@ public partial class LongTaskWithReturn<T, TR> : LongTask
             return;
         }
 
-        var watch = new System.Diagnostics.Stopwatch();
-        watch.Reset();
 
 
         try
         {
-            watch.Start();
+            sw.Start();
 
             var tmp = await _action(value.Item);
 
             value.ReturnQueue.SetValue(tmp);
-            watch.Stop();
-            Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
+            sw.Stop();
+            var total = sw.Elapsed.Milliseconds;
+            if (total < fastestMilliSeconds)
+            {
+                fastestMilliSeconds = total;
+            }
+            _finished++;
+            averageMilliSeconds = total / _finished;
+            if (_queue.Count > maxBackPressure)
+            {
+                maxBackPressure = _queue.Count;
+            }
+
         }
         catch (Exception e)
         {

@@ -35,7 +35,7 @@ public class
             var imageHeight = image.Height;
             image.Mutate(img =>
             {
-                img.Crop(new Rectangle(imageWidth / 4 + imageWidth/8, imageHeight / 2 +imageHeight  /8, imageWidth / 2, imageHeight / 8));
+                img.Crop(new Rectangle(imageWidth / 4 + imageWidth / 8, imageHeight / 2 + imageHeight / 8, imageWidth / 2, imageHeight / 8));
 
             });
             await image.SaveAsPngAsync(mem);
@@ -46,10 +46,10 @@ public class
         using var imgOut = matOut.EmptyClone();
         using var gausout = matOut.EmptyClone();
         using var threshout = matOut.EmptyClone();
- 
+
         Cv2.GaussianBlur(matOut, gausout, new OpenCvSharp.Size(9, 9), -1);
-     //  
-        Cv2.AdaptiveThreshold(gausout, threshout,  255, AdaptiveThresholdTypes.GaussianC,ThresholdTypes.Binary,5,0);
+        //  
+        Cv2.AdaptiveThreshold(gausout, threshout, 255, AdaptiveThresholdTypes.GaussianC, ThresholdTypes.Binary, 5, 0);
         Cv2.Threshold(threshout, imgOut, 0, 255, ThresholdTypes.Otsu);
 
         ImageScannerTaskManager.GetInstance().GetLongTasker()?
@@ -59,10 +59,10 @@ public class
 
         //Cv2.ImShow(value.streamDefinition.StreamerName, imgOut);
         //Cv2.WaitKey(1);
-        
+
 
         value.streamCaptureStatus.IncrementImagesPrepped();
-   
+
 
     }
 

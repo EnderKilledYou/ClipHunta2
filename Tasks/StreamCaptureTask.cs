@@ -98,7 +98,8 @@ public class StreamCaptureTask
                 frameNumber++;
 
             }
-        }catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             Log.Logger.Error(ex, "error parsing stream");
             _cts.Cancel();
@@ -109,26 +110,26 @@ public class StreamCaptureTask
             streamCaptureStatus.SetFinalFrameCount(frameNumber);
         }
 
-      
+
     }
 
     private void EmitFrame(Mat frameMat, StreamCaptureType captureType, StreamCaptureStatus streamCaptureStatus,
         int frameNumber, double fps)
     {
         var tmp = frameMat.Clone();
-        
+
         Task.Run(() =>
         {
-            
+
             ImagePrepperTaskManager.GetInstance().GetLongTasker()
                 ?.PutInQueue((_stream, tmp.ToBytes(), captureType, streamCaptureStatus, frameNumber,
                     (int)(frameNumber / fps),
                     (int)fps));
-            tmp.Dispose();    
+            tmp.Dispose();
         });
 
-  
-    
+
+
     }
 
     public void Start(string streamUrl, StreamCaptureType captureType, StreamCaptureStatus streamCaptureStatus)

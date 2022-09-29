@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ClipHunta2": {
+      "commandName": "Project",
+      "commandLineArgs": "https://localhost:5001/"
+    }
+  }
+}

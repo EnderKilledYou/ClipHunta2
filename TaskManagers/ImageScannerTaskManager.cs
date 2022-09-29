@@ -2,9 +2,9 @@
 
 namespace ClipHunta2;
 
-public sealed class ImageScannerTaskManager : LongTaskManger<ImageScannerTask>
+public sealed class ImageScannerTaskManager : LongTaskManager<ImageScannerTask>
 { 
-    private static ImageScannerTaskManager _instance; 
+    private static ImageScannerTaskManager? _instance; 
 
     public ImageScannerTaskManager()
     {
@@ -18,11 +18,9 @@ public sealed class ImageScannerTaskManager : LongTaskManger<ImageScannerTask>
 
     public static ImageScannerTaskManager GetInstance()
     {
-        if (_instance == null)
-        {
-            _instance = new ImageScannerTaskManager();
-            _cancellationToken = new CancellationTokenSource();
-        }
+        if (_instance != null) return _instance;
+        _instance = new ImageScannerTaskManager();
+        _cancellationToken = new CancellationTokenSource();
 
         return _instance;
     }

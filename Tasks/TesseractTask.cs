@@ -26,7 +26,7 @@ public class TesseractTask : LongTaskWithReturn<Pix, string>, IDisposable
         return _count.Value;
     }
 
-    protected object GetTop()
+    protected object? GetTop()
     {
         return TesseractLongTaskManager.GetInstance().GetTopTasker();
     }

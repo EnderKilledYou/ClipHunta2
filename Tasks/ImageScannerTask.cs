@@ -33,9 +33,9 @@ public class ImageScannerTask : LongTask<(StreamDefinition streamDefinition,
 
 
         EventRouterTaskManager.GetInstance().GetLongTasker()?.Put(
-            new LongTaskQueueItem<(StreamDefinition, FrameEvent[], StreamCaptureStatus)>((value.streamDefinition,
+            new LongTaskQueueItem<(StreamDefinition, InternalFrameEvent[], StreamCaptureStatus)>((value.streamDefinition,
                 OwFrameTester.GetInstance().TestFrame(text)
-                    .Select(s => new FrameEvent(s, value.frameNumber, value.second, value.fps)).ToArray(),
+                    .Select(s => new InternalFrameEvent(s, value.frameNumber, value.second, value.fps)).ToArray(),
                 value.streamCaptureStatus)));
 
         value.streamCaptureStatus.IncrementImagesScanned();

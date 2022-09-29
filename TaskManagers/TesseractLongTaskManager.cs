@@ -1,6 +1,6 @@
 ﻿namespace ClipHunta2;
 
-public sealed class TesseractLongTaskManager : LongTaskManger<TesseractTask>
+public sealed class TesseractLongTaskManager : LongTaskManager<TesseractTask>
 {
     public TesseractLongTaskManager()
     {

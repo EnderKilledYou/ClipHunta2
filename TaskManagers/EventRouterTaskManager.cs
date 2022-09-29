@@ -1,8 +1,10 @@
 ﻿namespace ClipHunta2;
 
-public sealed class EventRouterTaskManager : LongTaskManger<EventRouterTask>
+public sealed class EventRouterTaskManager : LongTaskManager<EventRouterTask>
 {
-    private static EventRouterTaskManager _instance;
+    private static EventRouterTaskManager? _instance;
+    
+ 
 
     public EventRouterTaskManager()
     {
@@ -16,12 +18,12 @@ public sealed class EventRouterTaskManager : LongTaskManger<EventRouterTask>
 
     public static EventRouterTaskManager GetInstance()
     {
-        if (_instance == null)
-        {
-            _instance = new EventRouterTaskManager();
-            _cancellationToken = new CancellationTokenSource();
-        }
+        if (_instance != null) return _instance;
+        _instance = new EventRouterTaskManager();
+        _cancellationToken = new CancellationTokenSource();
 
         return _instance;
     }
+ 
+  
 }

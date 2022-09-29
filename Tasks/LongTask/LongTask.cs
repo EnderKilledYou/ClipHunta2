@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using Serilog;
 
 namespace ClipHunta2;
@@ -10,7 +11,7 @@ public partial class LongTask<T> : LongTask
     }
 
     private readonly ConcurrentQueue<LongTaskQueueItem<T>> _queue = new();
-
+    private Stopwatch sw = new Stopwatch();
     public override int Count()
     {
         return _queue.Count;
@@ -27,7 +28,22 @@ public partial class LongTask<T> : LongTask
 
         try
         {
+
+            sw.Start();
             await _action(value.Item);
+            sw.Stop();
+            var total = sw.Elapsed.Milliseconds;
+            if (total < fastestMilliSeconds)
+            {
+                fastestMilliSeconds = total;
+            }
+            _finished++;
+            averageMilliSeconds = total / _finished;
+            if (_queue.Count > maxBackPressure)
+            {
+                maxBackPressure = _queue.Count;
+            }
+
         }
         catch (Exception e)
         {
@@ -61,5 +77,34 @@ public partial class LongTask<T> : LongTask
     public async Task Put(LongTaskQueueItem<T> work)
     {
         Task.Run(() => { _queue.Enqueue(work); });
+    }
+    int _finished = 0;
+    int averageMilliSeconds = 0;
+    int maxMilliSeconds = 0;
+    int maxBackPressure = 0;
+    int fastestMilliSeconds = int.MaxValue;
+    public override int Finished()
+    {
+        return _finished;
+    }
+
+    public override int AverageMilliSeconds()
+    {
+        return averageMilliSeconds;
+    }
+
+    public override int MaxMilliSeconds()
+    {
+        return maxMilliSeconds;
+    }
+
+    public override int MaxBackPressure()
+    {
+        return maxBackPressure;
+    }
+
+    public override int FastestMilliSecond()
+    {
+        return fastestMilliSeconds;
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace ClipHunta2;
+﻿using ClipHost.ServiceModel;
 
-public sealed class ImagePrepperTaskManager : LongTaskManger<ImagePrepperTask>
+namespace ClipHunta2;
+
+public sealed class ImagePrepperTaskManager : LongTaskManager<ImagePrepperTask>
 { 
     private static ImagePrepperTaskManager _instance;
 
@@ -14,7 +16,7 @@ public sealed class ImagePrepperTaskManager : LongTaskManger<ImagePrepperTask>
         _longTasks = Array.Empty<ImagePrepperTask>();
     }
 
-
+ 
     public static ImagePrepperTaskManager GetInstance()
     {
         if (_instance == null)
@@ -26,5 +28,5 @@ public sealed class ImagePrepperTaskManager : LongTaskManger<ImagePrepperTask>
         return _instance;
     }
 
-  
+    
 }

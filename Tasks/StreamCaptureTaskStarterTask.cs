@@ -21,6 +21,7 @@ public class StreamDefinition
     public StreamCaptureType StreamCaptureType { get; init; }
 
     public string StreamerName { get; init; }
+    public int DtoId { get; internal set; }
 }
 
 public class ThreadSafeInt
@@ -73,7 +74,7 @@ public class ThreadSafeInt
     }
 }
 
- 
+
 
 public class StreamCaptureStatus
 {
@@ -84,6 +85,7 @@ public class StreamCaptureStatus
     private ThreadSafeInt _eventsRouted = 0;
     private ThreadSafeInt _skipped = 0;
     private int _finalFrameCount = -1;
+
     public void IncrementFinishedCount()
     {
         _finished.Increment();
@@ -158,9 +160,10 @@ public class StreamCaptureTaskStarterTask
 
     private void _watch(object? sender, DoWorkEventArgs e)
     {
-        StreamCaptureTask captureTask = new StreamCaptureTask(_cts, new StreamDefinition(_stream, _captureType));
 
-        var (clipId, status) = (ValueTuple<string, StreamCaptureStatus>)e.Argument!;
+
+        var (clipId, status, dtoId) = (ValueTuple<string, StreamCaptureStatus, int>)e.Argument!;
+        StreamCaptureTask captureTask = new(_cts, new StreamDefinition(_stream, _captureType) { DtoId = dtoId });
         string streamUrl = null;
         if (_captureType == StreamCaptureType.Clip)
         {
@@ -174,7 +177,7 @@ public class StreamCaptureTaskStarterTask
         else
         {
             var streams = StreamLinkRunner.LookUpStream("https://twitch.tv/" + _stream);
-            if (streams != null && streams.Streams !=null)
+            if (streams != null && streams.Streams != null)
             {
                 var streamDict = streams.Streams;
 
@@ -186,7 +189,7 @@ public class StreamCaptureTaskStarterTask
         if (streamUrl != null) captureTask.Start(streamUrl, _captureType, status);
     }
 
-    public StreamCaptureStatus Start(string? clipId)
+    public StreamCaptureStatus Start(string? clipId, int dtoId)
     {
         if (_backgroundWorker.IsBusy)
         {
@@ -198,8 +201,11 @@ public class StreamCaptureTaskStarterTask
             throw new ArgumentException("Argument can't be null, need clip id");
         }
 
-        StreamCaptureStatus status = new StreamCaptureStatus();
-        _backgroundWorker.RunWorkerAsync((clipId, status));
+        StreamCaptureStatus status = new()
+        {
+           
+        };
+        _backgroundWorker.RunWorkerAsync((clipId, status, dtoId));
         return status;
     }
 
